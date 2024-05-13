@@ -1,4 +1,6 @@
-import { useState, useRef } from 'react';
+import { useHistory } from 'react-router-dom';
+import { useState, useRef, useContext } from 'react';
+import AuthContext from '../../context/AuthContext';
 
 import classes from './AuthForm.module.css';
 
@@ -8,6 +10,10 @@ const AuthForm = () => {
 
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+
+  const ctx = useContext(AuthContext);
+
+  const history = useHistory();
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -43,7 +49,8 @@ const AuthForm = () => {
           const data = await response.json();
           if (response.ok) {
             console.log(data.idToken);
-            localStorage.setItem('jwtToken', data.idToken);
+            ctx.login(data.idToken);
+            history.push('/');
           } else {
             console.log(data);
             throw new Error(data.error.message);

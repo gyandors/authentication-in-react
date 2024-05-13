@@ -22,8 +22,6 @@ function AuthContextProvider({ children }) {
     setIsLoggedIn(false);
   }
 
-  console.log(ctxValue);
-
   useEffect(() => {
     if (localStorage.getItem('jwtToken')) setIsLoggedIn(true);
   }, []);

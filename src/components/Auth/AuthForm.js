@@ -50,7 +50,7 @@ const AuthForm = () => {
           if (response.ok) {
             console.log(data.idToken);
             ctx.login(data.idToken);
-            history.push('/');
+            history.push('/profile');
           } else {
             console.log(data);
             throw new Error(data.error.message);

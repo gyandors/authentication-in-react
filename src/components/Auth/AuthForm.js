@@ -3,8 +3,10 @@ import { useState, useRef } from 'react';
 import classes from './AuthForm.module.css';
 
 const AuthForm = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const emailRef = useRef();
+  const passwordRef = useRef();
 
+  const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const switchAuthModeHandler = () => {
@@ -14,35 +16,81 @@ const AuthForm = () => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
 
-    const newUserData = {
-      email: event.target.email.value,
-      password: event.target.password.value,
-    };
+    const enteredEmail = emailRef.current.value;
+    const enteredPassword = passwordRef.current.value;
 
-    async function createAccount() {
-      setIsLoading(() => true);
+    if (isLogin) {
+      (async function userLogin() {
+        setIsLoading(() => true);
 
-      try {
-        const response = await fetch(
-          'https://test-api-cd004-default-rtdb.firebaseio.com/newuser.json',
-          {
-            method: 'POST',
-            body: JSON.stringify(newUserData),
+        try {
+          const response = await fetch(
+            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBp62gfGdLcr8Nq08w32S5wk67nFHDdT_A',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                email: enteredEmail,
+                password: enteredPassword,
+                returnSecureToken: true,
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log(response);
+
+          const data = await response.json();
+          if (response.ok) {
+            console.log(data.idToken);
+            localStorage.setItem('jwtToken', data.idToken);
+          } else {
+            console.log(data);
+            throw new Error(data.error.message);
           }
-        );
-        console.log(response);
-
-        if (!response.ok) {
-          throw new Error(response.statusText);
+        } catch (error) {
+          console.error(error);
+          alert(error.message);
         }
-      } catch (error) {
-        console.error(error);
-        alert(error);
-      }
-      setIsLoading(() => false);
-    }
 
-    createAccount();
+        setIsLoading(() => false);
+      })(); //Self-invoking function
+    } else {
+      (async function userSignup() {
+        setIsLoading(() => true);
+
+        try {
+          const response = await fetch(
+            'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBp62gfGdLcr8Nq08w32S5wk67nFHDdT_A',
+            {
+              method: 'POST',
+              body: JSON.stringify({
+                email: enteredEmail,
+                password: enteredPassword,
+                returnSecureToken: true,
+              }),
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          console.log(response);
+
+          const data = await response.json();
+          if (response.ok) {
+            console.log(data);
+          } else {
+            // console.log(data);
+            throw new Error(data.error.message);
+          }
+        } catch (error) {
+          console.error(error);
+          alert(error.message);
+        }
+
+        setIsLoading(() => false);
+      })(); //Self-invoking function
+    }
   };
 
   return (
@@ -51,11 +99,11 @@ const AuthForm = () => {
       <form onSubmit={handleFormSubmit}>
         <div className={classes.control}>
           <label htmlFor="email">Your Email</label>
-          <input type="email" id="email" required />
+          <input type="email" id="email" required ref={emailRef} />
         </div>
         <div className={classes.control}>
           <label htmlFor="password">Your Password</label>
-          <input type="password" id="password" required />
+          <input type="password" id="password" required ref={passwordRef} />
         </div>
         <div className={classes.actions}>
           {isLoading ? (

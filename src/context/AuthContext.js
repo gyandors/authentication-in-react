@@ -1,9 +1,9 @@
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState } from 'react';
 
 const AuthContext = createContext();
 
 function AuthContextProvider({ children }) {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('jwtToken'));
 
   const isLoggedIn = !!token;
 
@@ -17,18 +17,16 @@ function AuthContextProvider({ children }) {
   function handleLogin(token) {
     setToken(token);
     localStorage.setItem('jwtToken', token);
+
+    setTimeout(() => {
+      handleLogout();
+    }, 300000);
   }
 
   function handleLogout() {
     setToken(null);
     localStorage.removeItem('jwtToken');
   }
-
-  useEffect(() => {
-    if (localStorage.getItem('jwtToken')) {
-      setToken(localStorage.getItem('jwtToken'));
-    }
-  }, []);
 
   return (
     <AuthContext.Provider value={ctxValue}>{children}</AuthContext.Provider>

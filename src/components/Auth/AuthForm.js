@@ -25,10 +25,9 @@ const AuthForm = () => {
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
 
+    setIsLoading(true);
     if (isLogin) {
       (async function userLogin() {
-        setIsLoading(() => true);
-
         try {
           const response = await fetch(
             'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBp62gfGdLcr8Nq08w32S5wk67nFHDdT_A',
@@ -44,15 +43,15 @@ const AuthForm = () => {
               },
             }
           );
-          console.log(response);
+          // console.log(response);
 
           const data = await response.json();
           if (response.ok) {
-            console.log(data.idToken);
+            // console.log(data.idToken);
             ctx.login(data.idToken);
-            history.push('/profile');
+            history.replace('/profile');
           } else {
-            console.log(data);
+            // console.log(data);
             throw new Error(data.error.message);
           }
         } catch (error) {
@@ -60,12 +59,10 @@ const AuthForm = () => {
           alert(error.message);
         }
 
-        setIsLoading(() => false);
+        setIsLoading(false);
       })(); //Self-invoking function
     } else {
       (async function userSignup() {
-        setIsLoading(() => true);
-
         try {
           const response = await fetch(
             'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBp62gfGdLcr8Nq08w32S5wk67nFHDdT_A',
@@ -81,11 +78,11 @@ const AuthForm = () => {
               },
             }
           );
-          console.log(response);
+          // console.log(response);
 
           const data = await response.json();
           if (response.ok) {
-            console.log(data);
+            // console.log(data);
           } else {
             // console.log(data);
             throw new Error(data.error.message);
@@ -94,8 +91,7 @@ const AuthForm = () => {
           console.error(error);
           alert(error.message);
         }
-
-        setIsLoading(() => false);
+        setIsLoading(false);
       })(); //Self-invoking function
     }
   };

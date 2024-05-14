@@ -30,15 +30,15 @@ const ProfileForm = () => {
           }
         );
 
-        console.log(response);
+        // console.log(response);
         const data = await response.json();
         if (response.ok) {
-          console.log(data);
+          // console.log(data);
           alert('Password changed successfully. Login again...');
           ctx.logout();
-          history.push('/auth');
+          history.replace('/auth');
         } else {
-          console.log(data);
+          // console.log(data);
           throw new Error(data.error.message);
         }
       } catch (error) {

@@ -7,33 +7,6 @@ const MainNavigation = () => {
   const ctx = useContext(AuthContext);
 
   const history = useHistory();
-  let content;
-
-  if (ctx.isLoggedIn) {
-    content = (
-      <>
-        <li>
-          <Link to="/profile">Profile</Link>
-        </li>
-        <li>
-          <button
-            onClick={() => {
-              history.push('/auth');
-              ctx.logout();
-            }}
-          >
-            Logout
-          </button>
-        </li>
-      </>
-    );
-  } else {
-    content = (
-      <li>
-        <Link to="/auth">Login</Link>
-      </li>
-    );
-  }
 
   return (
     <header className={classes.header}>
@@ -41,7 +14,30 @@ const MainNavigation = () => {
         <div className={classes.logo}>React Auth</div>
       </Link>
       <nav>
-        <ul>{content}</ul>
+        <ul>
+          {ctx.isLoggedIn && (
+            <>
+              <li>
+                <Link to="/profile">Profile</Link>
+              </li>
+              <li>
+                <button
+                  onClick={() => {
+                    history.replace('/auth');
+                    ctx.logout();
+                  }}
+                >
+                  Logout
+                </button>
+              </li>
+            </>
+          )}
+          {!ctx.isLoggedIn && (
+            <li>
+              <Link to="/auth">Login</Link>
+            </li>
+          )}
+        </ul>
       </nav>
     </header>
   );

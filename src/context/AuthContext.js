@@ -3,27 +3,31 @@ import { createContext, useState, useEffect } from 'react';
 const AuthContext = createContext();
 
 function AuthContextProvider({ children }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState(null);
+
+  const isLoggedIn = !!token;
 
   const ctxValue = {
-    jwtToken: localStorage.getItem('jwtToken'),
+    jwtToken: token,
     isLoggedIn: isLoggedIn,
     login: handleLogin,
     logout: handleLogout,
   };
 
   function handleLogin(token) {
+    setToken(token);
     localStorage.setItem('jwtToken', token);
-    setIsLoggedIn(true);
   }
 
   function handleLogout() {
+    setToken(null);
     localStorage.removeItem('jwtToken');
-    setIsLoggedIn(false);
   }
 
   useEffect(() => {
-    if (localStorage.getItem('jwtToken')) setIsLoggedIn(true);
+    if (localStorage.getItem('jwtToken')) {
+      setToken(localStorage.getItem('jwtToken'));
+    }
   }, []);
 
   return (

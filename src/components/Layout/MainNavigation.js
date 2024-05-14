@@ -18,7 +18,7 @@ const MainNavigation = () => {
         <li>
           <button
             onClick={() => {
-              history.push('/');
+              history.push('/auth');
               ctx.logout();
             }}
           >
